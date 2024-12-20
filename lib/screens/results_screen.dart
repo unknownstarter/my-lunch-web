@@ -4,6 +4,7 @@ import '../providers/search_provider.dart';
 import '../models/restaurant.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import '../services/analytics_service.dart';
+import 'package:logging/logging.dart';
 
 class ResultsScreen extends StatefulWidget {
   const ResultsScreen({super.key});
@@ -14,6 +15,7 @@ class ResultsScreen extends StatefulWidget {
 
 class _ResultsScreenState extends State<ResultsScreen> {
   final AnalyticsService _analytics = AnalyticsService();
+  final _logger = Logger('ResultsScreen');
 
   @override
   void initState() {
@@ -92,7 +94,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
       body: FutureBuilder<List<Restaurant>>(
         future: Provider.of<SearchProvider>(context, listen: false)
             .searchRestaurants(
-          foodTypes: args['foodTypes'],
+          foodTypes: args['foodTypes'] as List<String>,
           location: args['location'],
         ),
         builder: (context, snapshot) {
@@ -101,12 +103,14 @@ class _ResultsScreenState extends State<ResultsScreen> {
           }
 
           if (snapshot.hasError) {
+            _logger.warning('검색 에러: ${snapshot.error}');
             final defaultResults = _getDefaultResults();
             return _buildRestaurantList(defaultResults);
           }
 
           final restaurants = snapshot.data!;
           if (restaurants.isEmpty) {
+            _logger.info('검색 결과 없음');
             return const Center(child: Text('검색 결과가 없습니다'));
           }
 

@@ -1,19 +1,29 @@
 import 'package:flutter/foundation.dart';
 import '../services/naver_api_service.dart';
 import '../models/restaurant.dart';
+import 'package:logging/logging.dart';
 
 class SearchProvider with ChangeNotifier {
+  final _logger = Logger('SearchProvider');
   final NaverApiService _apiService = NaverApiService();
   final Map<String, List<Restaurant>> _cache = {};
   final _cacheExpiry = const Duration(minutes: 5);
   final Map<String, DateTime> _cacheTimestamps = {};
 
   Future<List<Restaurant>> searchRestaurants({
-    required List<String> foodTypes,
+    required dynamic foodTypes,
     required String location,
   }) async {
-    final foodTypesStr = foodTypes.join(',');
-    final cacheKey = '$location:$foodTypesStr';
+    List<String> processedFoodTypes;
+    if (foodTypes is List<String>) {
+      processedFoodTypes = foodTypes;
+    } else if (foodTypes is List) {
+      processedFoodTypes = foodTypes.map((e) => e.toString()).toList();
+    } else {
+      processedFoodTypes = [foodTypes.toString()];
+    }
+
+    final cacheKey = '$location-${processedFoodTypes.join(",")}';
 
     if (_cache.containsKey(cacheKey)) {
       final timestamp = _cacheTimestamps[cacheKey];
@@ -27,7 +37,7 @@ class SearchProvider with ChangeNotifier {
 
     try {
       final results = await _apiService.searchRestaurants(
-        foodTypesStr,
+        processedFoodTypes.join(','),
         location: location,
       );
 
@@ -36,7 +46,8 @@ class SearchProvider with ChangeNotifier {
 
       return results;
     } catch (e) {
-      if (location == '서울시 강남구 역삼동' && foodTypes.contains('한식')) {
+      _logger.warning('검색 에러: $e');
+      if (location == '강남역' && processedFoodTypes.contains('한식')) {
         return _getDefaultResults();
       }
       rethrow;

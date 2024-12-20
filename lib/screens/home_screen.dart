@@ -89,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (useDefault) {
       Navigator.pushNamed(context, '/results', arguments: {
-        'foodTypes': ['한식'],
+        'foodTypes': <String>['한식'],
         'location': '강남역',
         'price': '1-2만원',
         'distance': '도보 10분',
@@ -119,7 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     Navigator.pushNamed(context, '/results', arguments: {
-      'foodTypes': [selectedFoodType],
+      'foodTypes': <String>[selectedFoodType],
       'location': selectedLocation,
     });
   }
