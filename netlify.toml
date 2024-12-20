@@ -1,12 +1,24 @@
 [build]
-  command = "npm install && cd functions && npm install"
+  command = """
+    cd netlify/functions && npm install && cd ../.. && \
+    wget -q https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.13.9-stable.tar.xz && \
+    tar xf flutter_linux_3.13.9-stable.tar.xz && \
+    export PATH="$PATH:$PWD/flutter/bin" && \
+    flutter doctor && \
+    flutter config --enable-web && \
+    flutter pub get && \
+    flutter build web --release --web-renderer html
+  """
   functions = "netlify/functions"
-  publish = "build"
+  publish = "build/web"
 
-[functions]
-  node_bundler = "esbuild"
+[build.environment]
+  NODE_VERSION = "18"
+  FLUTTER_VERSION = "3.13.9"
+  NAVER_CLIENT_ID = "${NAVER_CLIENT_ID}"
+  NAVER_CLIENT_SECRET = "${NAVER_CLIENT_SECRET}"
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
   status = 200
