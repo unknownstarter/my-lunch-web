@@ -26,7 +26,7 @@ class DistanceSlider extends StatelessWidget {
             activeTrackColor: Colors.black,
             inactiveTrackColor: Colors.grey[300],
             thumbColor: Colors.black,
-            overlayColor: Colors.black.withOpacity(0.1),
+            overlayColor: Colors.black.withAlpha(25),
             valueIndicatorColor: Colors.black,
             valueIndicatorTextStyle: const TextStyle(color: Colors.white),
           ),
