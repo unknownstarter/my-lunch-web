@@ -1,10 +1,13 @@
 [build]
   command = """
+    npm install -g pnpm && \
     cd netlify/functions && npm install && cd ../.. && \
-    git clone https://github.com/flutter/flutter.git -b stable && \
+    wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.19.2-stable.tar.xz && \
+    tar xf flutter_linux_3.19.2-stable.tar.xz && \
     export PATH="$PATH:$PWD/flutter/bin" && \
-    flutter precache && \
+    flutter doctor && \
     flutter config --enable-web && \
+    flutter clean && \
     flutter pub get && \
     flutter build web --release
   """
@@ -13,7 +16,7 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  FLUTTER_VERSION = "stable"
+  FLUTTER_VERSION = "3.19.2"
 
 [[redirects]]
   from = "/api/*"
