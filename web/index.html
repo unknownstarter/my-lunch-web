@@ -38,6 +38,15 @@
   <script src="/__/firebase/10.8.0/firebase-firestore-compat.js"></script>
   <script src="/__/firebase/10.8.0/firebase-functions-compat.js"></script>
   <script src="/__/firebase/init.js"></script>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX'); // GA4 측정 ID로 교체
+  </script>
 </head>
 <body>
   <script src="main.dart.js" type="application/javascript"></script>

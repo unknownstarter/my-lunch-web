@@ -3,9 +3,23 @@ import 'package:provider/provider.dart';
 import '../providers/search_provider.dart';
 import '../models/restaurant.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../services/analytics_service.dart';
 
-class ResultsScreen extends StatelessWidget {
+class ResultsScreen extends StatefulWidget {
   const ResultsScreen({super.key});
+
+  @override
+  State<ResultsScreen> createState() => _ResultsScreenState();
+}
+
+class _ResultsScreenState extends State<ResultsScreen> {
+  final AnalyticsService _analytics = AnalyticsService();
+
+  @override
+  void initState() {
+    super.initState();
+    _analytics.logScreenView(screenName: 'results_screen');
+  }
 
   List<Restaurant> _getDefaultResults() {
     return [
@@ -20,6 +34,15 @@ class ResultsScreen extends StatelessWidget {
       ),
       // ... 4개 더 추가 ...
     ];
+  }
+
+  void _onRestaurantTap(Restaurant restaurant) {
+    _analytics.logSelectRestaurant(
+      restaurantName: restaurant.name,
+      type: restaurant.type,
+      location: restaurant.address,
+    );
+    // 기존 코드...
   }
 
   @override
@@ -81,45 +104,13 @@ class ResultsScreen extends StatelessWidget {
       itemCount: restaurants.length,
       itemBuilder: (context, index) {
         final restaurant = restaurants[index];
-        return Card(
-          margin: const EdgeInsets.only(bottom: 16),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  restaurant.name,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  restaurant.type,
-                  style: TextStyle(color: Colors.grey[600]),
-                ),
-                Text(
-                  restaurant.address,
-                  style: TextStyle(color: Colors.grey[600]),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.star, color: Colors.amber, size: 20),
-                    Text(' ${restaurant.rating}'),
-                    const Spacer(),
-                    Text('${(restaurant.distance / 100).toStringAsFixed(1)}분'),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => launchUrl(Uri.parse(restaurant.link)),
-                  child: const Text('네이버 지도에서 보기'),
-                ),
-              ],
-            ),
+        return ListTile(
+          onTap: () => _onRestaurantTap(restaurant),
+          title: Text(restaurant.name),
+          subtitle: Text(restaurant.address),
+          trailing: IconButton(
+            icon: const Icon(Icons.map),
+            onPressed: () => launchUrl(Uri.parse(restaurant.link)),
           ),
         );
       },

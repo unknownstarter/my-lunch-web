@@ -3,6 +3,7 @@ import '../widgets/food_type_selector.dart';
 import '../widgets/price_range_slider.dart';
 import '../widgets/distance_slider.dart';
 import '../widgets/preference_selector.dart';
+import '../services/analytics_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,12 +13,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final AnalyticsService _analytics = AnalyticsService();
   List<String> selectedFoodTypes = [];
   double selectedPriceRange = 1.0;
   double selectedDistance = 5.0;
   String? selectedPreference;
   String? selectedLocation;
   final locations = ['서울시 강남구 역삼동', '성남시 분당구 삼평동', '서울시 성동구 성수동'];
+
+  @override
+  void initState() {
+    super.initState();
+    _analytics.logScreenView(screenName: 'home_screen');
+  }
 
   Widget _buildLocationSection() {
     return Column(
@@ -90,6 +98,14 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
+    _analytics.logSearch(
+      foodTypes: selectedFoodTypes,
+      location: selectedLocation ?? '',
+      price: _getPriceLabel(selectedPriceRange),
+      distance: _getDistanceLabel(selectedDistance),
+      preference: selectedPreference,
+    );
+
     Navigator.pushNamed(context, '/results', arguments: {
       'foodTypes': [...selectedFoodTypes, '맛집'],
       'location': selectedLocation,
@@ -134,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   FoodTypeSelector(
                     selectedTypes: selectedFoodTypes,
-                    onSelectionChanged: (types) {
+                    onChanged: (types) {
                       setState(() => selectedFoodTypes = types);
                     },
                   ),
