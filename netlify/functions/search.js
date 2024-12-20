@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 
 exports.handler = async function(event, context) {
-  const { foodTypes, location, distance, price } = event.queryStringParameters;
+  const { foodTypes, location } = event.queryStringParameters;
   
   try {
     const searchQuery = `${location} ${foodTypes} 맛집`;
@@ -39,6 +39,8 @@ exports.handler = async function(event, context) {
           rating: parseFloat(item.rating || '0'),
           link: item.link.replace(/\?.*$/, ''),
           distance: parseFloat(item.distance || '0'),
+          description: item.description,
+          telephone: item.telephone,
         }));
     }
     

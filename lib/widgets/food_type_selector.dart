@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 class FoodTypeSelector extends StatelessWidget {
-  final List<String> selectedTypes;
-  final Function(List<String>) onChanged;
+  final String selectedType;
+  final Function(String) onChanged;
 
   const FoodTypeSelector({
     super.key,
-    required this.selectedTypes,
+    required this.selectedType,
     required this.onChanged,
   });
 
@@ -25,37 +25,18 @@ class FoodTypeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.all(16),
-          child: Text(
-            '음식 종류',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: foodTypes.map((type) {
-            final isSelected = selectedTypes.contains(type);
-            return FilterChip(
-              selected: isSelected,
-              label: Text(type),
-              onSelected: (selected) {
-                final newSelection = List<String>.from(selectedTypes);
-                if (selected) {
-                  newSelection.add(type);
-                } else {
-                  newSelection.remove(type);
-                }
-                onChanged(newSelection);
-              },
-            );
-          }).toList(),
-        ),
-      ],
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: foodTypes.map((type) {
+        return ChoiceChip(
+          selected: selectedType == type,
+          label: Text(type),
+          onSelected: (selected) {
+            onChanged(selected ? type : '');
+          },
+        );
+      }).toList(),
     );
   }
 }

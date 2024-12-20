@@ -48,12 +48,17 @@ exports.searchRestaurants = functions.https.onRequest((req, res) => {
       const cache = await cacheRef.get();
       
       if (cache.exists) {
-        const cacheData = cache.data();
-        const cacheAge = (Date.now() - cacheData.timestamp._seconds * 1000) / 1000 / 60; // 분 단위
+        const cacheAge = (Date.now() - cache.data().timestamp._seconds * 1000) / 1000 / 60; // 분 단위
         
-        if (cacheAge < 60) { // 1시간 이내 캐시 사용
-          return res.json(cacheData.results);
+        if (cacheAge < 30) { // 30분으로 단축
+          console.log('캐시 사용:', cacheKey);
+          return res.json(cache.data().results);
         }
+      }
+
+      // 오래된 캐시 삭제
+      if (cache.exists && cacheAge > 60) {
+        await cacheRef.delete();
       }
 
       // 네이버 API 호출

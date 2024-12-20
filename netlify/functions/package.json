@@ -1,15 +1,7 @@
 {
-  "name": "netlify-functions",
+  "name": "my-lunch-app-functions",
   "version": "1.0.0",
   "dependencies": {
-    "node-fetch": "^2.7.0"
-  },
-  "main": "search.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+    "node-fetch": "^2.6.1"
+  }
 }
