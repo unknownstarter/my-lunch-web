@@ -3,8 +3,8 @@ import 'dart:convert';
 import '../models/restaurant.dart';
 
 class NaverApiService {
-  static const String baseUrl = const String.fromEnvironment('API_URL',
-      defaultValue: 'http://localhost:8888/.netlify/functions/search');
+  static const String baseUrl = String.fromEnvironment('API_URL',
+      defaultValue: 'https://mylunchweb.netlify.app/.netlify/functions/search');
 
   Future<List<Restaurant>> searchRestaurants(
     String query, {
@@ -13,8 +13,15 @@ class NaverApiService {
     required String priceRange,
   }) async {
     try {
+      final queryParams = Uri(queryParameters: {
+        'query': query,
+        'location': location,
+        'maxDistance': maxDistance.toString(),
+        'priceRange': priceRange,
+      }).query;
+
       final response = await http.get(
-        Uri.parse('$baseUrl?query=$query'),
+        Uri.parse('$baseUrl?$queryParams'),
       );
 
       if (response.statusCode == 200) {
