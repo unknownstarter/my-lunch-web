@@ -1,8 +1,8 @@
 #!/bin/bash
 set -ex
 
-# Flutter SDK 다운로드 (3.27.1 버전)
-curl -L https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.27.1-stable.tar.xz -o flutter.tar.xz
+# Flutter SDK 다운로드 (3.13.9 버전)
+curl -L https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.13.9-stable.tar.xz -o flutter.tar.xz
 tar xf flutter.tar.xz
 export PATH="$PATH:$PWD/flutter/bin"
 

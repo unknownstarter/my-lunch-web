@@ -1,7 +1,7 @@
 [build]
   command = """
     cd netlify/functions && npm install && cd ../.. && \
-    wget -q https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.19.3-stable.tar.xz && \
+    wget -q https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.13.9-stable.tar.xz && \
     tar xf flutter_linux_3.19.3-stable.tar.xz && \
     export PATH="$PATH:$PWD/flutter/bin" && \
     flutter doctor && \
@@ -14,7 +14,7 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  FLUTTER_VERSION = "3.27.1"
+  FLUTTER_VERSION = "3.13.9"
   NAVER_CLIENT_ID = "${NAVER_CLIENT_ID}"
   NAVER_CLIENT_SECRET = "${NAVER_CLIENT_SECRET}"
 
