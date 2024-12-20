@@ -1,0 +1,9 @@
+{
+  "name": "my-lunch-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "prebuild": "git clone https://github.com/flutter/flutter.git --depth 1 -b stable flutter",
+    "build": "export PATH=\"$PATH:`pwd`/flutter/bin\" && flutter config --enable-web && flutter build web"
+  }
+} 

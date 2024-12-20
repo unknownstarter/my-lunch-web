@@ -1,9 +1,18 @@
 [build]
+  command = """
+    pwd && \
+    git clone https://github.com/flutter/flutter.git && \
+    ./flutter/bin/flutter precache && \
+    ./flutter/bin/flutter config --enable-web && \
+    ./flutter/bin/flutter build web
+  """
   publish = "build/web"
   functions = "netlify/functions"
-  command = "flutter build web"
+
+[build.environment]
+  NODE_VERSION = "18"
 
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
-  status = 200 
+  status = 200
