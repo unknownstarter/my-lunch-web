@@ -1,0 +1,9 @@
+[build]
+  publish = "build/web"
+  functions = "netlify/functions"
+  command = "flutter build web"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200 
