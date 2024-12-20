@@ -1,10 +1,12 @@
 [build]
   command = """
-    pwd && \
-    git clone https://github.com/flutter/flutter.git && \
-    ./flutter/bin/flutter precache && \
+    cd netlify/functions && npm install && cd ../.. && \
+    git clone https://github.com/flutter/flutter.git -b stable && \
+    ./flutter/bin/flutter --version && \
+    ./flutter/bin/flutter clean && \
+    ./flutter/bin/flutter pub get && \
     ./flutter/bin/flutter config --enable-web && \
-    ./flutter/bin/flutter build web
+    ./flutter/bin/flutter build web --release --web-renderer html
   """
   publish = "build/web"
   functions = "netlify/functions"
