@@ -24,15 +24,24 @@ class _ResultsScreenState extends State<ResultsScreen> {
   List<Restaurant> _getDefaultResults() {
     return [
       Restaurant(
-        name: '강남 맛집 1',
+        name: '강남 맛있는 식당',
         type: '한식',
-        address: '서울시 강남구 역삼동 123-45',
+        address: '서울시 강남구 강남대로 123',
         rating: 4.5,
-        link: 'https://naver.com',
-        distance: 500, // 5분
+        link: 'https://map.naver.com',
+        distance: 300,
         imageUrl: null,
       ),
-      // ... 4개 더 추가 ...
+      Restaurant(
+        name: '역삼 찌개마을',
+        type: '한식',
+        address: '서울시 강남구 역삼로 456',
+        rating: 4.3,
+        link: 'https://map.naver.com',
+        distance: 500,
+        imageUrl: null,
+      ),
+      // ... 더 많은 기본 결과 추가 ...
     ];
   }
 
@@ -99,18 +108,93 @@ class _ResultsScreenState extends State<ResultsScreen> {
   }
 
   Widget _buildRestaurantList(List<Restaurant> restaurants) {
+    final displayRestaurants = restaurants.take(10).toList();
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: restaurants.length,
+      itemCount: displayRestaurants.length,
       itemBuilder: (context, index) {
-        final restaurant = restaurants[index];
-        return ListTile(
-          onTap: () => _onRestaurantTap(restaurant),
-          title: Text(restaurant.name),
-          subtitle: Text(restaurant.address),
-          trailing: IconButton(
-            icon: const Icon(Icons.map),
-            onPressed: () => launchUrl(Uri.parse(restaurant.link)),
+        final restaurant = displayRestaurants[index];
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(25),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: InkWell(
+            onTap: () => _onRestaurantTap(restaurant),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '추천 결과 ${index + 1}',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    restaurant.name,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(Icons.star, size: 16, color: Colors.amber[700]),
+                      const SizedBox(width: 4),
+                      Text(
+                        restaurant.rating.toString(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    restaurant.address,
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${(restaurant.distance / 100).toStringAsFixed(1)}km',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 14,
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => launchUrl(Uri.parse(restaurant.link)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
+                          minimumSize: const Size(100, 36),
+                        ),
+                        child: const Text('바로가기'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
         );
       },
