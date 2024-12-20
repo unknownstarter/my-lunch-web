@@ -32,9 +32,9 @@ dependencies:
     sdk: flutter
 
   # Firebase
-  firebase_core: ^2.32.0
-  cloud_firestore: ^4.15.0
-  firebase_auth: ^4.17.0
+  firebase_core: ^3.9.0
+  cloud_firestore: ^5.6.0
+  firebase_auth: ^5.3.4
   
   # UI 컴포넌트
   flutter_rating_bar: ^4.0.1
@@ -51,10 +51,10 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   # 위치 서비스
-  geolocator: ^10.1.0
+  geolocator: ^13.0.2
 
   # Geocoding
-  geocoding: ^2.1.1
+  geocoding: ^3.0.0
 
   # URL 실행
   url_launcher: ^6.2.5
@@ -68,7 +68,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

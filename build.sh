@@ -9,9 +9,10 @@ ls -la
 git clone https://github.com/flutter/flutter.git
 
 # Flutter 직접 실행
-./flutter/bin/flutter precache
+./flutter/bin/flutter clean
+./flutter/bin/flutter pub get
 ./flutter/bin/flutter config --enable-web
-./flutter/bin/flutter build web
+./flutter/bin/flutter build web --release
 
 # 빌드 결과물 확인
 ls -la build/web
