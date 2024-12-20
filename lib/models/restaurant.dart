@@ -4,8 +4,10 @@ class Restaurant {
   final String address;
   final double rating;
   final String link;
-  final String? imageUrl;
   final double distance;
+  final String? imageUrl;
+  final String? description;
+  final String? telephone;
 
   Restaurant({
     required this.name,
@@ -13,8 +15,10 @@ class Restaurant {
     required this.address,
     required this.rating,
     required this.link,
-    this.imageUrl,
     required this.distance,
+    this.imageUrl,
+    this.description,
+    this.telephone,
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
@@ -24,8 +28,10 @@ class Restaurant {
       address: json['roadAddress'] ?? json['address'] ?? '',
       rating: double.tryParse(json['rating'] ?? '0') ?? 0.0,
       link: json['link'] ?? '',
-      imageUrl: json['imageUrl'],
       distance: double.tryParse(json['distance'] ?? '0') ?? 0.0,
+      imageUrl: json['imageUrl'],
+      description: json['description'],
+      telephone: json['telephone'],
     );
   }
 }

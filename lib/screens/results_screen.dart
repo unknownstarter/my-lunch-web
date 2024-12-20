@@ -145,40 +145,10 @@ class _ResultsScreenState extends State<ResultsScreen> {
         final restaurant = displayRestaurants[index];
         final distance = (restaurant.distance / 1000).toStringAsFixed(1);
 
-        return Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(25),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
+        return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: InkWell(
-            onTap: () async {
-              final scaffoldMessenger = ScaffoldMessenger.of(context);
-              try {
-                await launchUrlString(
-                  restaurant.link,
-                  mode: LaunchMode.externalApplication,
-                );
-                if (!mounted) return;
-                _analytics.logSelectRestaurant(
-                  restaurantName: restaurant.name,
-                  type: restaurant.type,
-                  location: restaurant.address,
-                );
-              } catch (e) {
-                if (!mounted) return;
-                scaffoldMessenger.showSnackBar(
-                  const SnackBar(content: Text('링크를 열 수 없습니다')),
-                );
-              }
-            },
+            onTap: () => _launchRestaurantLink(restaurant),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -221,6 +191,34 @@ class _ResultsScreenState extends State<ResultsScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
+                  if (restaurant.description?.isNotEmpty ?? false) ...[
+                    Text(
+                      restaurant.description!.length > 20
+                          ? '${restaurant.description!.substring(0, 20)}...'
+                          : restaurant.description!,
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                  if (restaurant.telephone?.isNotEmpty ?? false) ...[
+                    Row(
+                      children: [
+                        Icon(Icons.phone, size: 16, color: Colors.grey[600]),
+                        const SizedBox(width: 4),
+                        Text(
+                          restaurant.telephone!,
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                  ],
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -232,32 +230,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () async {
-                          final scaffoldMessenger =
-                              ScaffoldMessenger.of(context);
-                          try {
-                            await launchUrlString(
-                              restaurant.link,
-                              mode: LaunchMode.externalApplication,
-                            );
-                            if (!mounted) return;
-                            _analytics.logSelectRestaurant(
-                              restaurantName: restaurant.name,
-                              type: restaurant.type,
-                              location: restaurant.address,
-                            );
-                          } catch (e) {
-                            if (!mounted) return;
-                            scaffoldMessenger.showSnackBar(
-                              const SnackBar(content: Text('링크를 열 수 없습니다')),
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: Colors.white,
-                          minimumSize: const Size(100, 36),
-                        ),
+                        onPressed: () => _launchRestaurantLink(restaurant),
                         child: const Text('바로가기'),
                       ),
                     ],
@@ -269,5 +242,25 @@ class _ResultsScreenState extends State<ResultsScreen> {
         );
       },
     );
+  }
+
+  Future<void> _launchRestaurantLink(Restaurant restaurant) async {
+    try {
+      await launchUrlString(
+        restaurant.link,
+        mode: LaunchMode.externalApplication,
+      );
+      if (!mounted) return;
+      _analytics.logSelectRestaurant(
+        restaurantName: restaurant.name,
+        type: restaurant.type,
+        location: restaurant.address,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('링크를 열 수 없습니다')),
+      );
+    }
   }
 }

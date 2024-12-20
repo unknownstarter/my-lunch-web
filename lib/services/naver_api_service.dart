@@ -17,7 +17,8 @@ class NaverApiService {
         queryParameters: {
           'query': '$location $query',
           'display': 15,
-          'sort': 'comment',
+          'sort': 'random',
+          'refresh': DateTime.now().millisecondsSinceEpoch,
         },
       );
 
@@ -36,6 +37,9 @@ class NaverApiService {
           link: data['link'].toString().split('?').first,
           distance: double.tryParse(data['distance'] ?? '0') ?? 0.0,
           imageUrl: null,
+          description: (data['description'] as String?)
+              ?.replaceAll(RegExp(r'<[^>]*>'), ''),
+          telephone: data['telephone'] as String?,
         );
       }).toList();
     } catch (e) {
