@@ -2,17 +2,18 @@
   command = """
     cd netlify/functions && npm install && cd ../.. && \
     git clone https://github.com/flutter/flutter.git -b stable && \
-    ./flutter/bin/flutter --version && \
-    ./flutter/bin/flutter clean && \
-    ./flutter/bin/flutter pub get && \
-    ./flutter/bin/flutter config --enable-web && \
-    ./flutter/bin/flutter build web --release --web-renderer html
+    export PATH="$PATH:$PWD/flutter/bin" && \
+    flutter precache && \
+    flutter config --enable-web && \
+    flutter pub get && \
+    flutter build web --release
   """
   publish = "build/web"
   functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "18"
+  FLUTTER_VERSION = "stable"
 
 [[redirects]]
   from = "/api/*"
