@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../widgets/food_type_selector.dart';
 import '../widgets/price_range_slider.dart';
 import '../widgets/distance_slider.dart';
-import '../widgets/preference_selector.dart';
 import '../services/analytics_service.dart';
+import '../services/naver_api_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,12 +15,20 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final AnalyticsService _analytics = AnalyticsService();
+  final NaverApiService _apiService = NaverApiService();
   List<String> selectedFoodTypes = [];
   double selectedPriceRange = 1.0;
   double selectedDistance = 5.0;
-  String? selectedPreference;
   String? selectedLocation;
-  final locations = ['서울시 강남구 역삼동', '성남시 분당구 삼평동', '서울시 성동구 성수동'];
+  final locations = [
+    '강남역',
+    '서울역',
+    '홍대입구역',
+    '여의도역',
+    '판교역',
+    '서현역',
+    '정자역',
+  ];
 
   @override
   void initState() {
@@ -75,11 +84,10 @@ class _HomeScreenState extends State<HomeScreen> {
   void _searchRestaurants({bool useDefault = false}) {
     if (useDefault) {
       Navigator.pushNamed(context, '/results', arguments: {
-        'foodTypes': ['한식'],
-        'location': '서울시 강남구 역삼동',
-        'price': '만원대',
-        'distance': '10분',
-        'preference': '맛집',
+        'foodTypes': ['맛집'],
+        'location': '강남역',
+        'price': '1-2만원',
+        'distance': '도보 10분',
       });
       return;
     }
@@ -103,7 +111,6 @@ class _HomeScreenState extends State<HomeScreen> {
       location: selectedLocation ?? '',
       price: _getPriceLabel(selectedPriceRange),
       distance: _getDistanceLabel(selectedDistance),
-      preference: selectedPreference,
     );
 
     Navigator.pushNamed(context, '/results', arguments: {
@@ -111,21 +118,55 @@ class _HomeScreenState extends State<HomeScreen> {
       'location': selectedLocation,
       'price': _getPriceLabel(selectedPriceRange),
       'distance': _getDistanceLabel(selectedDistance),
-      'preference': selectedPreference ?? '맛집',
     });
   }
 
   String _getPriceLabel(double value) {
-    if (value <= 1) return '만원대';
-    if (value <= 2) return '2만원대';
-    return '3만원대';
+    if (value <= 1) return '1만원 이하';
+    if (value <= 2) return '1-2만원';
+    if (value <= 3) return '2-3만원';
+    return '3만원 이상';
   }
 
   String _getDistanceLabel(double value) {
-    if (value <= 5) return '5분 이내';
-    if (value <= 10) return '10분';
-    if (value <= 15) return '15분';
-    return '20분 이상';
+    if (value <= 0.5) return '도보 5분';
+    if (value <= 1.0) return '도보 10분';
+    if (value <= 1.5) return '도보 15분';
+    return '도보 20분';
+  }
+
+  Future<void> _testRandomSearch() async {
+    final testLocations = ['강남역', '서울역', '홍대입구역'];
+    final testFoodTypes = ['맛집', '한식', '중식', '일식'];
+
+    final randomLocation =
+        testLocations[DateTime.now().millisecond % testLocations.length];
+    final randomFoodType =
+        testFoodTypes[DateTime.now().second % testFoodTypes.length];
+
+    try {
+      final response = await _apiService.searchRestaurants(
+        randomFoodType,
+        location: randomLocation,
+        maxDistance: 1.0,
+        priceRange: '',
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('테스트 결과: ${response.length}개 검색됨\n'
+              '검색어: $randomLocation $randomFoodType\n'
+              '${response.isNotEmpty ? "첫번째 결과: ${response.first.name}" : ""}'),
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('테스트 실패: ${e.toString()}')),
+      );
+    }
   }
 
   @override
@@ -184,13 +225,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       setState(() => selectedDistance = value);
                     },
                   ),
-                  const SizedBox(height: 32),
-                  PreferenceSelector(
-                    selectedPreference: selectedPreference,
-                    onSelected: (pref) {
-                      setState(() => selectedPreference = pref);
-                    },
-                  ),
                 ],
               ),
             ),
@@ -202,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildLocationSection(),
                   const SizedBox(height: 20),
                   ElevatedButton(
-                    onPressed: () => _searchRestaurants(useDefault: true),
+                    onPressed: () => _searchRestaurants(),
                     child: const Text('추천받기'),
                   ),
                   const SizedBox(height: 12),
@@ -213,6 +247,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: TextStyle(color: Colors.grey),
                     ),
                   ),
+                  if (kDebugMode) ...[
+                    const SizedBox(height: 12),
+                    TextButton(
+                      onPressed: _testRandomSearch,
+                      child: const Text(
+                        '무작위 검색 테스트',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
