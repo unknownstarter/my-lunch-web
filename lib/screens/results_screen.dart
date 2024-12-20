@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/search_provider.dart';
 import '../models/restaurant.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import '../services/analytics_service.dart';
 
 class ResultsScreen extends StatefulWidget {
@@ -43,15 +43,6 @@ class _ResultsScreenState extends State<ResultsScreen> {
       ),
       // ... 더 많은 기본 결과 추가 ...
     ];
-  }
-
-  void _onRestaurantTap(Restaurant restaurant) {
-    _analytics.logSelectRestaurant(
-      restaurantName: restaurant.name,
-      type: restaurant.type,
-      location: restaurant.address,
-    );
-    // 기존 코드...
   }
 
   @override
@@ -108,12 +99,17 @@ class _ResultsScreenState extends State<ResultsScreen> {
   }
 
   Widget _buildRestaurantList(List<Restaurant> restaurants) {
-    final displayRestaurants = restaurants.take(10).toList();
+    final displayRestaurants = restaurants.length < 5
+        ? _getDefaultResults().take(5).toList()
+        : restaurants.take(10).toList();
+
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: displayRestaurants.length,
       itemBuilder: (context, index) {
         final restaurant = displayRestaurants[index];
+        final distance = (restaurant.distance / 1000).toStringAsFixed(1);
+
         return Container(
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
@@ -128,7 +124,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
             ],
           ),
           child: InkWell(
-            onTap: () => _onRestaurantTap(restaurant),
+            onTap: () => _openNaverPlace(restaurant.link),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -155,8 +151,8 @@ class _ResultsScreenState extends State<ResultsScreen> {
                       Icon(Icons.star, size: 16, color: Colors.amber[700]),
                       const SizedBox(width: 4),
                       Text(
-                        restaurant.rating.toString(),
-                        style: const TextStyle(
+                        '4.5',
+                        style: TextStyle(
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -175,14 +171,14 @@ class _ResultsScreenState extends State<ResultsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '${(restaurant.distance / 100).toStringAsFixed(1)}km',
+                        '${distance}km',
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 14,
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () => launchUrl(Uri.parse(restaurant.link)),
+                        onPressed: () => _openNaverPlace(restaurant.link),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
                           foregroundColor: Colors.white,
@@ -199,5 +195,19 @@ class _ResultsScreenState extends State<ResultsScreen> {
         );
       },
     );
+  }
+
+  Future<void> _openNaverPlace(String url) async {
+    try {
+      await launchUrlString(
+        url,
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('링크를 열 수 없습니다')),
+      );
+    }
   }
 }
