@@ -28,8 +28,26 @@ class _ResultsScreenState extends State<ResultsScreen> {
         type: '한식',
         address: '서울시 강남구 강남대로 123',
         rating: 4.5,
-        link: 'https://map.naver.com',
+        link: 'https://map.naver.com/p/entry/place/1234567890',
         distance: 300,
+        imageUrl: null,
+      ),
+      Restaurant(
+        name: '역삼 찌화요리',
+        type: '중식',
+        address: '서울시 강남구 역삼로 789',
+        rating: 4.4,
+        link: 'https://map.naver.com/p/entry/place/2345678901',
+        distance: 400,
+        imageUrl: null,
+      ),
+      Restaurant(
+        name: '일품 스시',
+        type: '일식',
+        address: '서울시 강남구 테헤란로 321',
+        rating: 4.6,
+        link: 'https://map.naver.com/p/entry/place/3456789012',
+        distance: 600,
         imageUrl: null,
       ),
       Restaurant(
@@ -37,11 +55,19 @@ class _ResultsScreenState extends State<ResultsScreen> {
         type: '한식',
         address: '서울시 강남구 역삼로 456',
         rating: 4.3,
-        link: 'https://map.naver.com',
+        link: 'https://map.naver.com/p/entry/place/0987654321',
         distance: 500,
         imageUrl: null,
       ),
-      // ... 더 많은 기본 결과 추가 ...
+      Restaurant(
+        name: '파스타 하우스',
+        type: '양식',
+        address: '서울시 강남구 논현로 159',
+        rating: 4.2,
+        link: 'https://map.naver.com/p/entry/place/4567890123',
+        distance: 700,
+        imageUrl: null,
+      ),
     ];
   }
 
@@ -99,9 +125,20 @@ class _ResultsScreenState extends State<ResultsScreen> {
   }
 
   Widget _buildRestaurantList(List<Restaurant> restaurants) {
-    final displayRestaurants = restaurants.length < 5
-        ? _getDefaultResults().take(5).toList()
-        : restaurants.take(10).toList();
+    List<Restaurant> displayRestaurants;
+    if (restaurants.isEmpty) {
+      // 검색 결과가 없는 경우 기본값 5개
+      displayRestaurants = _getDefaultResults().take(5).toList();
+    } else if (restaurants.length < 5) {
+      // 검색 결과가 5개 미만인 경우, 기본값으로 보충
+      displayRestaurants = [
+        ...restaurants,
+        ..._getDefaultResults().take(5 - restaurants.length)
+      ];
+    } else {
+      // 검색 결과가 5개 이상인 경우, 최대 10개까지 표시
+      displayRestaurants = restaurants.take(10).toList();
+    }
 
     return ListView.builder(
       padding: const EdgeInsets.all(16),
@@ -124,7 +161,25 @@ class _ResultsScreenState extends State<ResultsScreen> {
             ],
           ),
           child: InkWell(
-            onTap: () => _openNaverPlace(restaurant.link),
+            onTap: () async {
+              try {
+                await launchUrlString(
+                  restaurant.link,
+                  mode: LaunchMode.externalApplication,
+                );
+                if (!mounted) return;
+                _analytics.logSelectRestaurant(
+                  restaurantName: restaurant.name,
+                  type: restaurant.type,
+                  location: restaurant.address,
+                );
+              } catch (e) {
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('링크를 열 수 없습니다')),
+                );
+              }
+            },
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -178,7 +233,25 @@ class _ResultsScreenState extends State<ResultsScreen> {
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () => _openNaverPlace(restaurant.link),
+                        onPressed: () async {
+                          try {
+                            await launchUrlString(
+                              restaurant.link,
+                              mode: LaunchMode.externalApplication,
+                            );
+                            if (!mounted) return;
+                            _analytics.logSelectRestaurant(
+                              restaurantName: restaurant.name,
+                              type: restaurant.type,
+                              location: restaurant.address,
+                            );
+                          } catch (e) {
+                            if (!mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('링크를 열 수 없습니다')),
+                            );
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
                           foregroundColor: Colors.white,
