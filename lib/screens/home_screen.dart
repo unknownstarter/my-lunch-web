@@ -5,6 +5,8 @@ import '../widgets/price_range_slider.dart';
 import '../widgets/distance_slider.dart';
 import '../services/analytics_service.dart';
 import '../services/naver_api_service.dart';
+import '../providers/search_provider.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,7 +18,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final AnalyticsService _analytics = AnalyticsService();
   final NaverApiService _apiService = NaverApiService();
-  List<String> selectedFoodTypes = [];
+  String selectedFoodType = '';
   double selectedPriceRange = 1.0;
   double selectedDistance = 5.0;
   String? selectedLocation;
@@ -34,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _analytics.logScreenView(screenName: 'home_screen');
+    Provider.of<SearchProvider>(context, listen: false).clearCache();
   }
 
   Widget _buildLocationSection() {
@@ -82,9 +85,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _searchRestaurants({bool useDefault = false}) {
+    Provider.of<SearchProvider>(context, listen: false).clearCache();
+
     if (useDefault) {
       Navigator.pushNamed(context, '/results', arguments: {
-        'foodTypes': ['맛집'],
+        'foodTypes': ['한식'],
         'location': '강남역',
         'price': '1-2만원',
         'distance': '도보 10분',
@@ -99,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
-    if (selectedFoodTypes.isEmpty) {
+    if (selectedFoodType.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('음식 종류를 선택해주세요')),
       );
@@ -107,14 +112,14 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     _analytics.logSearch(
-      foodTypes: selectedFoodTypes,
+      foodTypes: [selectedFoodType],
       location: selectedLocation ?? '',
       price: _getPriceLabel(selectedPriceRange),
       distance: _getDistanceLabel(selectedDistance),
     );
 
     Navigator.pushNamed(context, '/results', arguments: {
-      'foodTypes': [...selectedFoodTypes, '맛집'],
+      'foodTypes': [selectedFoodType],
       'location': selectedLocation,
     });
   }
@@ -186,9 +191,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   FoodTypeSelector(
-                    selectedTypes: selectedFoodTypes,
-                    onChanged: (types) {
-                      setState(() => selectedFoodTypes = types);
+                    selectedType: selectedFoodType,
+                    onChanged: (type) {
+                      setState(() => selectedFoodType = type);
                     },
                   ),
                   const SizedBox(height: 32),

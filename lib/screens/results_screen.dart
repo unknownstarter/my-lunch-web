@@ -114,7 +114,10 @@ class _ResultsScreenState extends State<ResultsScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.pop(context),
+        onPressed: () async {
+          // 새로운 검색 시작
+          setState(() {}); // FutureBuilder 재실행
+        },
         backgroundColor: Colors.deepPurple,
         label: const Text('다시 추천받기'),
         icon: const Icon(Icons.refresh),
