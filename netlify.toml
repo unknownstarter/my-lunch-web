@@ -1,22 +1,17 @@
 [build]
   command = """
-    npm install -g pnpm && \
     cd netlify/functions && npm install && cd ../.. && \
-    wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.19.2-stable.tar.xz && \
-    tar xf flutter_linux_3.19.2-stable.tar.xz && \
-    export PATH="$PATH:$PWD/flutter/bin" && \
-    flutter doctor && \
-    flutter config --enable-web && \
-    flutter clean && \
-    flutter pub get && \
-    flutter build web --release
+    curl -L https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.16.9-stable.tar.xz -o flutter.tar.xz && \
+    tar xf flutter.tar.xz && \
+    ./flutter/bin/flutter --version && \
+    ./flutter/bin/flutter pub get && \
+    ./flutter/bin/flutter build web --release --web-renderer html
   """
   publish = "build/web"
   functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "18"
-  FLUTTER_VERSION = "3.19.2"
 
 [[redirects]]
   from = "/api/*"
