@@ -69,9 +69,9 @@ class _HomeScreenState extends State<HomeScreen> {
       Navigator.pushNamed(context, '/results', arguments: {
         'foodTypes': ['한식'],
         'location': '서울시 강남구 역삼동',
-        'price': '1만원대',
+        'price': '만원대',
         'distance': '10분',
-        'preference': '소개팅',
+        'preference': '맛집',
       });
       return;
     }
@@ -91,18 +91,18 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     Navigator.pushNamed(context, '/results', arguments: {
-      'foodTypes': selectedFoodTypes,
+      'foodTypes': [...selectedFoodTypes, '맛집'],
       'location': selectedLocation,
       'price': _getPriceLabel(selectedPriceRange),
       'distance': _getDistanceLabel(selectedDistance),
-      'preference': selectedPreference,
+      'preference': selectedPreference ?? '맛집',
     });
   }
 
   String _getPriceLabel(double value) {
-    if (value <= 1) return '1만원 미만';
+    if (value <= 1) return '만원대';
     if (value <= 2) return '2만원대';
-    return '3만원 이상';
+    return '3만원대';
   }
 
   String _getDistanceLabel(double value) {

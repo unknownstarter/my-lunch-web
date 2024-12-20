@@ -2,29 +2,39 @@ import 'package:flutter/material.dart';
 
 class FoodTypeSelector extends StatelessWidget {
   final List<String> selectedTypes;
-  final Function(List<String>) onSelectionChanged;
+  final Function(List<String>) onChanged;
 
   const FoodTypeSelector({
     super.key,
     required this.selectedTypes,
-    required this.onSelectionChanged,
+    required this.onChanged,
   });
+
+  static const foodTypes = [
+    '한식',
+    '중식',
+    '일식',
+    '양식',
+    '분식',
+    '카페',
+    '패스트푸드',
+    '치킨',
+    '피자',
+    '고기',
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final foodTypes = ['한식', '양식', '일식', '중식'];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          '선호하는 음식 종류',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+        const Padding(
+          padding: EdgeInsets.all(16),
+          child: Text(
+            '음식 종류',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
-        const SizedBox(height: 12),
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -40,7 +50,7 @@ class FoodTypeSelector extends StatelessWidget {
                 } else {
                   newSelection.remove(type);
                 }
-                onSelectionChanged(newSelection);
+                onChanged(newSelection);
               },
             );
           }).toList(),

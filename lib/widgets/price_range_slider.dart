@@ -11,7 +11,7 @@ class PriceRangeSlider extends StatelessWidget {
   });
 
   String _getPriceLabel(double value) {
-    if (value <= 1) return '1만원 미만';
+    if (value <= 1) return '만원 미만';
     if (value <= 2) return '2만원대';
     return '3만원 이상';
   }
@@ -19,33 +19,32 @@ class PriceRangeSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            activeTrackColor: Colors.black,
-            inactiveTrackColor: Colors.grey[300],
-            thumbColor: Colors.black,
-            overlayColor: Colors.black.withOpacity(0.1),
-            valueIndicatorColor: Colors.black,
-            valueIndicatorTextStyle: const TextStyle(color: Colors.white),
+        const Padding(
+          padding: EdgeInsets.all(16),
+          child: Text(
+            '가격대',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          child: Slider(
-            value: value,
-            min: 1,
-            max: 3,
-            divisions: 2,
-            label: _getPriceLabel(value),
-            onChanged: onChanged,
-          ),
+        ),
+        Slider(
+          value: value,
+          min: 0,
+          max: 3,
+          divisions: 3,
+          label: _getPriceLabel(value),
+          onChanged: onChanged,
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('1만원 미만', style: TextStyle(color: Colors.grey[600])),
-              Text('2만원대', style: TextStyle(color: Colors.grey[600])),
-              Text('3만원 이상', style: TextStyle(color: Colors.grey[600])),
+              Text('만원 미만', style: TextStyle(color: Colors.grey[600])),
+              Text('1-2만원', style: TextStyle(color: Colors.grey[600])),
+              Text('2-3만원', style: TextStyle(color: Colors.grey[600])),
+              Text('3만원↑', style: TextStyle(color: Colors.grey[600])),
             ],
           ),
         ),
