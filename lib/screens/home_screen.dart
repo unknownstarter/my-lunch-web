@@ -116,8 +116,6 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.pushNamed(context, '/results', arguments: {
       'foodTypes': [...selectedFoodTypes, '맛집'],
       'location': selectedLocation,
-      'price': _getPriceLabel(selectedPriceRange),
-      'distance': _getDistanceLabel(selectedDistance),
     });
   }
 
@@ -148,8 +146,6 @@ class _HomeScreenState extends State<HomeScreen> {
       final response = await _apiService.searchRestaurants(
         randomFoodType,
         location: randomLocation,
-        maxDistance: 1.0,
-        priceRange: '',
       );
 
       if (!mounted) return;

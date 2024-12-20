@@ -10,8 +10,6 @@ void main() {
       final response = await naverApiService.searchRestaurants(
         '맛집',
         location: '강남역',
-        maxDistance: 1.0,
-        priceRange: '',
       );
 
       // 응답 검증

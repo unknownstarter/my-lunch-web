@@ -94,8 +94,6 @@ class _ResultsScreenState extends State<ResultsScreen> {
             .searchRestaurants(
           foodTypes: args['foodTypes'],
           location: args['location'],
-          maxDistance: args['distance'],
-          priceRange: args['price'],
         ),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -162,6 +160,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
           ),
           child: InkWell(
             onTap: () async {
+              final scaffoldMessenger = ScaffoldMessenger.of(context);
               try {
                 await launchUrlString(
                   restaurant.link,
@@ -175,7 +174,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                 );
               } catch (e) {
                 if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
+                scaffoldMessenger.showSnackBar(
                   const SnackBar(content: Text('링크를 열 수 없습니다')),
                 );
               }
@@ -234,6 +233,8 @@ class _ResultsScreenState extends State<ResultsScreen> {
                       ),
                       ElevatedButton(
                         onPressed: () async {
+                          final scaffoldMessenger =
+                              ScaffoldMessenger.of(context);
                           try {
                             await launchUrlString(
                               restaurant.link,
@@ -247,7 +248,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                             );
                           } catch (e) {
                             if (!mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(
+                            scaffoldMessenger.showSnackBar(
                               const SnackBar(content: Text('링크를 열 수 없습니다')),
                             );
                           }
@@ -268,19 +269,5 @@ class _ResultsScreenState extends State<ResultsScreen> {
         );
       },
     );
-  }
-
-  Future<void> _openNaverPlace(String url) async {
-    try {
-      await launchUrlString(
-        url,
-        mode: LaunchMode.externalApplication,
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('링크를 열 수 없습니다')),
-      );
-    }
   }
 }

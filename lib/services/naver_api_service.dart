@@ -10,8 +10,6 @@ class NaverApiService {
   Future<List<Restaurant>> searchRestaurants(
     String query, {
     required String location,
-    required double maxDistance,
-    required String priceRange,
   }) async {
     try {
       final response = await _dio.get<Map<String, dynamic>>(
