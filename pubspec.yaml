@@ -32,32 +32,32 @@ dependencies:
     sdk: flutter
 
   # Firebase
-  firebase_core: ^2.24.0
-  cloud_firestore: ^4.13.0
-  firebase_auth: ^4.15.0
+  firebase_core: ^2.32.0
+  cloud_firestore: ^4.17.5
+  firebase_auth: ^4.16.0
   
   # UI 컴포넌트
   flutter_rating_bar: ^4.0.1
-  cached_network_image: ^3.2.3
+  cached_network_image: ^3.4.1
   
   # 상태관리
-  provider: ^6.0.5
+  provider: ^6.1.1
   
   # 네트워크
-  http: ^1.1.0
+  http: ^1.2.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
 
   # 위치 서비스
-  geolocator: ^10.0.1
+  geolocator: ^10.1.0
 
   # Geocoding
-  geocoding: ^2.1.0
+  geocoding: ^2.1.1
 
   # URL 실행
-  url_launcher: ^6.1.14
+  url_launcher: ^6.2.4
 
 dev_dependencies:
   flutter_test:
